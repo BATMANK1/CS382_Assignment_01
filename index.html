@@ -1,0 +1,1102 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Projects & Task Management System</title>
+    <script src="node_modules/jquery/dist/jquery.min.js"></script>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      body {
+        font-family: Arial, sans-serif;
+        background: #f5f5f5;
+        color: #333;
+      }
+      #header {
+        background: #2c3e50;
+        color: #fff;
+        padding: 15px 30px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+      #header h1 {
+        font-size: 20px;
+      }
+      #nav {
+        display: flex;
+        gap: 5px;
+      }
+      #nav a {
+        color: #ccc;
+        text-decoration: none;
+        padding: 8px 16px;
+        border-radius: 4px;
+        cursor: pointer;
+      }
+      #nav a:hover {
+        background: #34495e;
+        color: #fff;
+      }
+      #nav a.active {
+        background: #3498db;
+        color: #fff;
+      }
+      #main {
+        max-width: 1100px;
+        margin: 20px auto;
+        padding: 0 20px;
+      }
+      .page {
+        display: none;
+      }
+      .page.active {
+        display: block;
+      }
+      .summary-cards {
+        display: flex;
+        gap: 15px;
+        flex-wrap: wrap;
+        margin-bottom: 25px;
+      }
+      .card {
+        background: #fff;
+        border: 1px solid #ddd;
+        border-radius: 6px;
+        padding: 20px;
+        flex: 1;
+        min-width: 200px;
+        text-align: center;
+      }
+      .card h3 {
+        font-size: 14px;
+        color: #777;
+        margin-bottom: 8px;
+      }
+      .card .number {
+        font-size: 32px;
+        font-weight: bold;
+        color: #2c3e50;
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        background: #fff;
+        margin-top: 10px;
+      }
+      th,
+      td {
+        padding: 10px 12px;
+        text-align: left;
+        border-bottom: 1px solid #ddd;
+      }
+      th {
+        background: #2c3e50;
+        color: #fff;
+        font-weight: normal;
+      }
+      tr:hover {
+        background: #f9f9f9;
+      }
+      .btn {
+        padding: 6px 14px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 13px;
+        color: #fff;
+      }
+      .btn-primary {
+        background: #3498db;
+      }
+      .btn-success {
+        background: #27ae60;
+      }
+      .btn-danger {
+        background: #e74c3c;
+      }
+      .btn-warning {
+        background: #f39c12;
+      }
+      .btn:hover {
+        opacity: 0.85;
+      }
+      .form-group {
+        margin-bottom: 12px;
+      }
+      .form-group label {
+        display: block;
+        margin-bottom: 4px;
+        font-size: 14px;
+      }
+      .form-group input,
+      .form-group select,
+      .form-group textarea {
+        width: 100%;
+        padding: 8px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        font-size: 14px;
+      }
+      .form-group textarea {
+        resize: vertical;
+        height: 60px;
+      }
+      .modal-overlay {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.4);
+        z-index: 100;
+        justify-content: center;
+        align-items: center;
+      }
+      .modal-overlay.show {
+        display: flex;
+      }
+      .modal {
+        background: #fff;
+        padding: 25px;
+        border-radius: 8px;
+        width: 450px;
+        max-width: 90%;
+        max-height: 90vh;
+        overflow-y: auto;
+      }
+      .modal h2 {
+        margin-bottom: 15px;
+        font-size: 18px;
+      }
+      .modal-buttons {
+        display: flex;
+        gap: 8px;
+        margin-top: 15px;
+      }
+      .toolbar {
+        display: flex;
+        gap: 10px;
+        margin-bottom: 15px;
+        flex-wrap: wrap;
+        align-items: center;
+      }
+      .toolbar input,
+      .toolbar select {
+        padding: 8px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        font-size: 14px;
+      }
+      .toolbar input {
+        flex: 1;
+        min-width: 180px;
+      }
+      .badge {
+        padding: 3px 10px;
+        border-radius: 12px;
+        font-size: 12px;
+        color: #fff;
+        display: inline-block;
+      }
+      .badge-completed {
+        background: #27ae60;
+      }
+      .badge-in-progress {
+        background: #f39c12;
+      }
+      .badge-not-started {
+        background: #95a5a6;
+      }
+      .section-title {
+        font-size: 18px;
+        margin-bottom: 15px;
+        padding-bottom: 8px;
+        border-bottom: 2px solid #3498db;
+      }
+      .report-card {
+        background: #fff;
+        border: 1px solid #ddd;
+        border-radius: 6px;
+        padding: 20px;
+        margin-bottom: 15px;
+      }
+      .report-card h3 {
+        margin-bottom: 10px;
+        font-size: 16px;
+      }
+      .bar-container {
+        margin: 5px 0;
+      }
+      .bar-label {
+        font-size: 13px;
+        margin-bottom: 3px;
+      }
+      .bar-bg {
+        background: #ecf0f1;
+        border-radius: 4px;
+        height: 22px;
+        overflow: hidden;
+      }
+      .bar-fill {
+        height: 100%;
+        border-radius: 4px;
+        text-align: center;
+        color: #fff;
+        font-size: 12px;
+        line-height: 22px;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="header">
+      <h1>Projects & Task Management</h1>
+      <div id="nav">
+        <a href="#" class="nav-link active" data-page="dashboard">Dashboard</a>
+        <a href="#" class="nav-link" data-page="projects">Projects</a>
+        <a href="#" class="nav-link" data-page="tasks">Tasks</a>
+        <a href="#" class="nav-link" data-page="reports">Reports</a>
+      </div>
+    </div>
+
+    <div id="main">
+      <div id="dashboard" class="page active">
+        <h2 class="section-title">Dashboard</h2>
+        <div class="summary-cards" id="summary-cards"></div>
+        <h3 style="margin-bottom: 10px">Recent Tasks</h3>
+        <table>
+          <thead>
+            <tr>
+              <th>Title</th>
+              <th>Project</th>
+              <th>Assignee</th>
+              <th>Priority</th>
+              <th>Status</th>
+              <th>Due Date</th>
+            </tr>
+          </thead>
+          <tbody id="dashboard-tasks"></tbody>
+        </table>
+      </div>
+
+      <div id="projects" class="page">
+        <h2 class="section-title">Project Management</h2>
+        <div class="toolbar">
+          <input
+            type="text"
+            id="search-project"
+            placeholder="Search projects..."
+          />
+          <select id="filter-project-status">
+            <option value="">All Statuses</option>
+            <option value="Not Started">Not Started</option>
+            <option value="In Progress">In Progress</option>
+            <option value="Completed">Completed</option>
+          </select>
+          <button class="btn btn-success" id="btn-add-project">
+            + Add Project
+          </button>
+        </div>
+        <table>
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Name</th>
+              <th>Description</th>
+              <th>Status</th>
+              <th>Priority</th>
+              <th>Start Date</th>
+              <th>End Date</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="projects-table"></tbody>
+        </table>
+      </div>
+
+      <div id="tasks" class="page">
+        <h2 class="section-title">Task Management</h2>
+        <div class="toolbar">
+          <input type="text" id="search-input" placeholder="Search tasks..." />
+          <select id="filter-status">
+            <option value="">All Statuses</option>
+            <option value="Not Started">Not Started</option>
+            <option value="In Progress">In Progress</option>
+            <option value="Completed">Completed</option>
+          </select>
+          <select id="filter-project">
+            <option value="">All Projects</option>
+          </select>
+          <button class="btn btn-success" id="btn-add-task">+ Add Task</button>
+        </div>
+        <table>
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Title</th>
+              <th>Project</th>
+              <th>Assignee</th>
+              <th>Priority</th>
+              <th>Status</th>
+              <th>Due Date</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="tasks-table"></tbody>
+        </table>
+      </div>
+
+      <div id="reports" class="page">
+        <h2 class="section-title">Reports</h2>
+        <div id="reports-content"></div>
+      </div>
+    </div>
+
+    <div class="modal-overlay" id="project-modal">
+      <div class="modal">
+        <h2 id="project-modal-title">Add Project</h2>
+        <input type="hidden" id="proj-id" />
+        <div class="form-group">
+          <label>Project Name</label><input type="text" id="proj-name" />
+        </div>
+        <div class="form-group">
+          <label>Description</label><textarea id="proj-desc"></textarea>
+        </div>
+        <div class="form-group">
+          <label>Status</label>
+          <select id="proj-status">
+            <option value="Not Started">Not Started</option>
+            <option value="In Progress">In Progress</option>
+            <option value="Completed">Completed</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Priority</label>
+          <select id="proj-priority">
+            <option value="Low">Low</option>
+            <option value="Medium">Medium</option>
+            <option value="High">High</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Start Date</label><input type="date" id="proj-start" />
+        </div>
+        <div class="form-group">
+          <label>End Date</label><input type="date" id="proj-end" />
+        </div>
+        <div class="modal-buttons">
+          <button class="btn btn-primary" id="btn-save-project">Save</button>
+          <button class="btn btn-danger" id="btn-cancel-project">Cancel</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal-overlay" id="delete-project-modal">
+      <div class="modal">
+        <h2>Confirm Delete</h2>
+        <p>Are you sure you want to delete this project and all its tasks?</p>
+        <input type="hidden" id="delete-project-id" />
+        <div class="modal-buttons">
+          <button class="btn btn-danger" id="btn-confirm-delete-project">
+            Delete
+          </button>
+          <button class="btn btn-primary" id="btn-cancel-delete-project">
+            Cancel
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal-overlay" id="task-modal">
+      <div class="modal">
+        <h2 id="modal-title">Add Task</h2>
+        <input type="hidden" id="task-id" />
+        <div class="form-group">
+          <label>Title</label><input type="text" id="task-title" />
+        </div>
+        <div class="form-group">
+          <label>Description</label><textarea id="task-desc"></textarea>
+        </div>
+        <div class="form-group">
+          <label>Project</label
+          ><select id="task-project"></select>
+        </div>
+        <div class="form-group">
+          <label>Assignee</label><input type="text" id="task-assignee" />
+        </div>
+        <div class="form-group">
+          <label>Priority</label>
+          <select id="task-priority">
+            <option value="Low">Low</option>
+            <option value="Medium">Medium</option>
+            <option value="High">High</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Status</label>
+          <select id="task-status">
+            <option value="Not Started">Not Started</option>
+            <option value="In Progress">In Progress</option>
+            <option value="Completed">Completed</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Due Date</label><input type="date" id="task-due" />
+        </div>
+        <div class="modal-buttons">
+          <button class="btn btn-primary" id="btn-save-task">Save</button>
+          <button class="btn btn-danger" id="btn-cancel-modal">Cancel</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal-overlay" id="delete-modal">
+      <div class="modal">
+        <h2>Confirm Delete</h2>
+        <p>Are you sure you want to delete this task?</p>
+        <input type="hidden" id="delete-task-id" />
+        <div class="modal-buttons">
+          <button class="btn btn-danger" id="btn-confirm-delete">Delete</button>
+          <button class="btn btn-primary" id="btn-cancel-delete">Cancel</button>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      $(document).ready(function () {
+        var appData = { projects: [], tasks: [] };
+
+        function loadData(callback) {
+          $.ajax({
+            url: "data.json",
+            dataType: "json",
+            success: function (data) {
+              appData = data;
+              if (callback) callback();
+            },
+            error: function () {
+              alert("Error loading data.json. Make sure the file exists.");
+            },
+          });
+        }
+
+        function getProjectName(projectId) {
+          var project = appData.projects.find(function (p) {
+            return p.id === projectId;
+          });
+          return project ? project.name : "Unknown";
+        }
+
+        function statusBadge(status) {
+          var cls = "badge-not-started";
+          if (status === "Completed") cls = "badge-completed";
+          else if (status === "In Progress") cls = "badge-in-progress";
+          return '<span class="badge ' + cls + '">' + status + "</span>";
+        }
+
+        function nextTaskId() {
+          var max = 0;
+          appData.tasks.forEach(function (t) {
+            if (t.id > max) max = t.id;
+          });
+          return max + 1;
+        }
+
+        function nextProjectId() {
+          var max = 0;
+          appData.projects.forEach(function (p) {
+            if (p.id > max) max = p.id;
+          });
+          return max + 1;
+        }
+
+        $("#nav").on("click", ".nav-link", function (e) {
+          e.preventDefault();
+          var page = $(this).data("page");
+          $(".nav-link").removeClass("active");
+          $(this).addClass("active");
+          $(".page").removeClass("active");
+          $("#" + page).addClass("active");
+
+          if (page === "dashboard") renderDashboard();
+          else if (page === "projects") renderProjects();
+          else if (page === "tasks") renderTasks();
+          else if (page === "reports") renderReports();
+        });
+
+        function renderDashboard() {
+          var totalProjects = appData.projects.length;
+          var totalTasks = appData.tasks.length;
+          var completed = appData.tasks.filter(function (t) {
+            return t.status === "Completed";
+          }).length;
+          var inProgress = appData.tasks.filter(function (t) {
+            return t.status === "In Progress";
+          }).length;
+          var notStarted = appData.tasks.filter(function (t) {
+            return t.status === "Not Started";
+          }).length;
+          var highPriority = appData.tasks.filter(function (t) {
+            return t.priority === "High";
+          }).length;
+
+          var h = "";
+          h +=
+            '<div class="card"><h3>Total Projects</h3><div class="number">' +
+            totalProjects +
+            "</div></div>";
+          h +=
+            '<div class="card"><h3>Total Tasks</h3><div class="number">' +
+            totalTasks +
+            "</div></div>";
+          h +=
+            '<div class="card"><h3>Completed</h3><div class="number" style="color:#27ae60">' +
+            completed +
+            "</div></div>";
+          h +=
+            '<div class="card"><h3>In Progress</h3><div class="number" style="color:#f39c12">' +
+            inProgress +
+            "</div></div>";
+          h +=
+            '<div class="card"><h3>Not Started</h3><div class="number" style="color:#95a5a6">' +
+            notStarted +
+            "</div></div>";
+          h +=
+            '<div class="card"><h3>High Priority</h3><div class="number" style="color:#e74c3c">' +
+            highPriority +
+            "</div></div>";
+          $("#summary-cards").html(h);
+
+          var sorted = appData.tasks.slice().sort(function (a, b) {
+            return new Date(b.dueDate) - new Date(a.dueDate);
+          });
+          var rows = "";
+          sorted.slice(0, 5).forEach(function (t) {
+            rows +=
+              "<tr><td>" +
+              t.title +
+              "</td><td>" +
+              getProjectName(t.projectId) +
+              "</td><td>" +
+              t.assignee +
+              "</td><td>" +
+              t.priority +
+              "</td><td>" +
+              statusBadge(t.status) +
+              "</td><td>" +
+              t.dueDate +
+              "</td></tr>";
+          });
+          $("#dashboard-tasks").html(rows);
+        }
+
+        function renderProjects() {
+          filterAndDisplayProjects();
+        }
+
+        function filterAndDisplayProjects() {
+          var search = $("#search-project").val().toLowerCase();
+          var statusF = $("#filter-project-status").val();
+
+          var filtered = appData.projects.filter(function (p) {
+            var matchS =
+              p.name.toLowerCase().indexOf(search) !== -1 ||
+              p.description.toLowerCase().indexOf(search) !== -1;
+            var matchSt = !statusF || p.status === statusF;
+            return matchS && matchSt;
+          });
+
+          var rows = "";
+          if (filtered.length === 0) {
+            rows =
+              '<tr><td colspan="8" style="text-align:center;color:#999;">No projects found.</td></tr>';
+          } else {
+            filtered.forEach(function (p) {
+              rows +=
+                "<tr><td>" +
+                p.id +
+                "</td><td>" +
+                p.name +
+                "</td><td>" +
+                p.description +
+                "</td><td>" +
+                statusBadge(p.status) +
+                "</td><td>" +
+                p.priority +
+                "</td><td>" +
+                p.startDate +
+                "</td><td>" +
+                p.endDate +
+                "</td>";
+              rows +=
+                '<td><button class="btn btn-warning btn-edit-project" data-id="' +
+                p.id +
+                '">Edit</button> <button class="btn btn-danger btn-delete-project" data-id="' +
+                p.id +
+                '">Delete</button></td></tr>';
+            });
+          }
+          $("#projects-table").html(rows);
+        }
+
+        $("#search-project").on("keyup", filterAndDisplayProjects);
+        $("#filter-project-status").on("change", filterAndDisplayProjects);
+
+        $("#btn-add-project").on("click", function () {
+          $("#project-modal-title").text("Add Project");
+          $("#proj-id").val("");
+          $("#proj-name").val("");
+          $("#proj-desc").val("");
+          $("#proj-status").val("Not Started");
+          $("#proj-priority").val("Medium");
+          $("#proj-start").val("");
+          $("#proj-end").val("");
+          $("#project-modal").addClass("show");
+        });
+
+        $(document).on("click", ".btn-edit-project", function () {
+          var id = parseInt($(this).data("id"));
+          var proj = appData.projects.find(function (p) {
+            return p.id === id;
+          });
+          if (!proj) return;
+          $("#project-modal-title").text("Edit Project");
+          $("#proj-id").val(proj.id);
+          $("#proj-name").val(proj.name);
+          $("#proj-desc").val(proj.description);
+          $("#proj-status").val(proj.status);
+          $("#proj-priority").val(proj.priority);
+          $("#proj-start").val(proj.startDate);
+          $("#proj-end").val(proj.endDate);
+          $("#project-modal").addClass("show");
+        });
+
+        $("#btn-save-project").on("click", function () {
+          var name = $("#proj-name").val().trim();
+          var desc = $("#proj-desc").val().trim();
+          var status = $("#proj-status").val();
+          var priority = $("#proj-priority").val();
+          var startDate = $("#proj-start").val();
+          var endDate = $("#proj-end").val();
+
+          if (!name || !startDate || !endDate) {
+            alert("Please fill in Name, Start Date, and End Date.");
+            return;
+          }
+
+          var editId = $("#proj-id").val();
+          if (editId) {
+            var idx = appData.projects.findIndex(function (p) {
+              return p.id === parseInt(editId);
+            });
+            if (idx !== -1) {
+              appData.projects[idx].name = name;
+              appData.projects[idx].description = desc;
+              appData.projects[idx].status = status;
+              appData.projects[idx].priority = priority;
+              appData.projects[idx].startDate = startDate;
+              appData.projects[idx].endDate = endDate;
+            }
+          } else {
+            appData.projects.push({
+              id: nextProjectId(),
+              name: name,
+              description: desc,
+              status: status,
+              priority: priority,
+              startDate: startDate,
+              endDate: endDate,
+            });
+          }
+          $("#project-modal").removeClass("show");
+          filterAndDisplayProjects();
+        });
+
+        $("#btn-cancel-project").on("click", function () {
+          $("#project-modal").removeClass("show");
+        });
+
+        $(document).on("click", ".btn-delete-project", function () {
+          $("#delete-project-id").val($(this).data("id"));
+          $("#delete-project-modal").addClass("show");
+        });
+
+        $("#btn-confirm-delete-project").on("click", function () {
+          var id = parseInt($("#delete-project-id").val());
+          appData.projects = appData.projects.filter(function (p) {
+            return p.id !== id;
+          });
+          appData.tasks = appData.tasks.filter(function (t) {
+            return t.projectId !== id;
+          });
+          $("#delete-project-modal").removeClass("show");
+          filterAndDisplayProjects();
+        });
+
+        $("#btn-cancel-delete-project").on("click", function () {
+          $("#delete-project-modal").removeClass("show");
+        });
+
+        function renderTasks() {
+          populateProjectFilter();
+          filterAndDisplayTasks();
+        }
+
+        function populateProjectFilter() {
+          var html = '<option value="">All Projects</option>';
+          appData.projects.forEach(function (p) {
+            html += '<option value="' + p.id + '">' + p.name + "</option>";
+          });
+          $("#filter-project").html(html);
+        }
+
+        function filterAndDisplayTasks() {
+          var search = $("#search-input").val().toLowerCase();
+          var statusF = $("#filter-status").val();
+          var projF = $("#filter-project").val();
+
+          var filtered = appData.tasks.filter(function (t) {
+            var matchS =
+              t.title.toLowerCase().indexOf(search) !== -1 ||
+              t.assignee.toLowerCase().indexOf(search) !== -1 ||
+              t.description.toLowerCase().indexOf(search) !== -1;
+            var matchSt = !statusF || t.status === statusF;
+            var matchP = !projF || t.projectId === parseInt(projF);
+            return matchS && matchSt && matchP;
+          });
+
+          var rows = "";
+          if (filtered.length === 0) {
+            rows =
+              '<tr><td colspan="8" style="text-align:center;color:#999;">No tasks found.</td></tr>';
+          } else {
+            filtered.forEach(function (t) {
+              rows +=
+                "<tr><td>" +
+                t.id +
+                "</td><td>" +
+                t.title +
+                "</td><td>" +
+                getProjectName(t.projectId) +
+                "</td><td>" +
+                t.assignee +
+                "</td><td>" +
+                t.priority +
+                "</td><td>" +
+                statusBadge(t.status) +
+                "</td><td>" +
+                t.dueDate +
+                "</td>";
+              rows +=
+                '<td><button class="btn btn-warning btn-edit" data-id="' +
+                t.id +
+                '">Edit</button> <button class="btn btn-danger btn-delete" data-id="' +
+                t.id +
+                '">Delete</button></td></tr>';
+            });
+          }
+          $("#tasks-table").html(rows);
+        }
+
+        $("#search-input").on("keyup", filterAndDisplayTasks);
+        $("#filter-status").on("change", filterAndDisplayTasks);
+        $("#filter-project").on("change", filterAndDisplayTasks);
+
+        function populateModalProjects() {
+          var html = "";
+          appData.projects.forEach(function (p) {
+            html += '<option value="' + p.id + '">' + p.name + "</option>";
+          });
+          $("#task-project").html(html);
+        }
+
+        $("#btn-add-task").on("click", function () {
+          $("#modal-title").text("Add Task");
+          $("#task-id").val("");
+          $("#task-title").val("");
+          $("#task-desc").val("");
+          $("#task-assignee").val("");
+          $("#task-priority").val("Medium");
+          $("#task-status").val("Not Started");
+          $("#task-due").val("");
+          populateModalProjects();
+          $("#task-modal").addClass("show");
+        });
+
+        $(document).on("click", ".btn-edit", function () {
+          var id = parseInt($(this).data("id"));
+          var task = appData.tasks.find(function (t) {
+            return t.id === id;
+          });
+          if (!task) return;
+          $("#modal-title").text("Edit Task");
+          $("#task-id").val(task.id);
+          $("#task-title").val(task.title);
+          $("#task-desc").val(task.description);
+          $("#task-assignee").val(task.assignee);
+          $("#task-priority").val(task.priority);
+          $("#task-status").val(task.status);
+          $("#task-due").val(task.dueDate);
+          populateModalProjects();
+          $("#task-project").val(task.projectId);
+          $("#task-modal").addClass("show");
+        });
+
+        $("#btn-save-task").on("click", function () {
+          var title = $("#task-title").val().trim();
+          var desc = $("#task-desc").val().trim();
+          var assignee = $("#task-assignee").val().trim();
+          var priority = $("#task-priority").val();
+          var status = $("#task-status").val();
+          var dueDate = $("#task-due").val();
+          var projectId = parseInt($("#task-project").val());
+
+          if (!title || !assignee || !dueDate) {
+            alert("Please fill in Title, Assignee, and Due Date.");
+            return;
+          }
+
+          var editId = $("#task-id").val();
+          if (editId) {
+            var idx = appData.tasks.findIndex(function (t) {
+              return t.id === parseInt(editId);
+            });
+            if (idx !== -1) {
+              appData.tasks[idx].title = title;
+              appData.tasks[idx].description = desc;
+              appData.tasks[idx].assignee = assignee;
+              appData.tasks[idx].priority = priority;
+              appData.tasks[idx].status = status;
+              appData.tasks[idx].dueDate = dueDate;
+              appData.tasks[idx].projectId = projectId;
+            }
+          } else {
+            appData.tasks.push({
+              id: nextTaskId(),
+              projectId: projectId,
+              title: title,
+              description: desc,
+              assignee: assignee,
+              status: status,
+              priority: priority,
+              dueDate: dueDate,
+            });
+          }
+          $("#task-modal").removeClass("show");
+          filterAndDisplayTasks();
+        });
+
+        $("#btn-cancel-modal").on("click", function () {
+          $("#task-modal").removeClass("show");
+        });
+
+        $(document).on("click", ".btn-delete", function () {
+          $("#delete-task-id").val($(this).data("id"));
+          $("#delete-modal").addClass("show");
+        });
+
+        $("#btn-confirm-delete").on("click", function () {
+          var id = parseInt($("#delete-task-id").val());
+          appData.tasks = appData.tasks.filter(function (t) {
+            return t.id !== id;
+          });
+          $("#delete-modal").removeClass("show");
+          filterAndDisplayTasks();
+        });
+
+        $("#btn-cancel-delete").on("click", function () {
+          $("#delete-modal").removeClass("show");
+        });
+
+        function renderReports() {
+          var html = "";
+
+          html += '<div class="report-card"><h3>Tasks per Project</h3>';
+          appData.projects.forEach(function (p) {
+            var count = appData.tasks.filter(function (t) {
+              return t.projectId === p.id;
+            }).length;
+            var pct =
+              appData.tasks.length > 0
+                ? Math.round((count / appData.tasks.length) * 100)
+                : 0;
+            html +=
+              '<div class="bar-container"><div class="bar-label">' +
+              p.name +
+              " (" +
+              count +
+              " tasks)</div>";
+            html +=
+              '<div class="bar-bg"><div class="bar-fill" style="width:' +
+              pct +
+              '%;background:#3498db;">' +
+              pct +
+              "%</div></div></div>";
+          });
+          html += "</div>";
+
+          html += '<div class="report-card"><h3>Task Status Distribution</h3>';
+          var statuses = ["Not Started", "In Progress", "Completed"];
+          var colors = {
+            "Not Started": "#95a5a6",
+            "In Progress": "#f39c12",
+            Completed: "#27ae60",
+          };
+          statuses.forEach(function (s) {
+            var count = appData.tasks.filter(function (t) {
+              return t.status === s;
+            }).length;
+            var pct =
+              appData.tasks.length > 0
+                ? Math.round((count / appData.tasks.length) * 100)
+                : 0;
+            html +=
+              '<div class="bar-container"><div class="bar-label">' +
+              s +
+              " (" +
+              count +
+              ")</div>";
+            html +=
+              '<div class="bar-bg"><div class="bar-fill" style="width:' +
+              pct +
+              "%;background:" +
+              colors[s] +
+              ';">' +
+              pct +
+              "%</div></div></div>";
+          });
+          html += "</div>";
+
+          html += '<div class="report-card"><h3>Priority Breakdown</h3>';
+          var priorities = ["High", "Medium", "Low"];
+          var pColors = { High: "#e74c3c", Medium: "#f39c12", Low: "#3498db" };
+          priorities.forEach(function (pr) {
+            var count = appData.tasks.filter(function (t) {
+              return t.priority === pr;
+            }).length;
+            var pct =
+              appData.tasks.length > 0
+                ? Math.round((count / appData.tasks.length) * 100)
+                : 0;
+            html +=
+              '<div class="bar-container"><div class="bar-label">' +
+              pr +
+              " (" +
+              count +
+              ")</div>";
+            html +=
+              '<div class="bar-bg"><div class="bar-fill" style="width:' +
+              pct +
+              "%;background:" +
+              pColors[pr] +
+              ';">' +
+              pct +
+              "%</div></div></div>";
+          });
+          html += "</div>";
+
+          html += '<div class="report-card"><h3>Tasks per Assignee</h3>';
+          html +=
+            "<table><thead><tr><th>Assignee</th><th>Total</th><th>Completed</th><th>In Progress</th><th>Not Started</th></tr></thead><tbody>";
+          var assignees = [];
+          appData.tasks.forEach(function (t) {
+            if (assignees.indexOf(t.assignee) === -1)
+              assignees.push(t.assignee);
+          });
+          assignees.forEach(function (a) {
+            var my = appData.tasks.filter(function (t) {
+              return t.assignee === a;
+            });
+            html +=
+              "<tr><td>" +
+              a +
+              "</td><td>" +
+              my.length +
+              "</td><td>" +
+              my.filter(function (t) {
+                return t.status === "Completed";
+              }).length +
+              "</td><td>" +
+              my.filter(function (t) {
+                return t.status === "In Progress";
+              }).length +
+              "</td><td>" +
+              my.filter(function (t) {
+                return t.status === "Not Started";
+              }).length +
+              "</td></tr>";
+          });
+          html += "</tbody></table></div>";
+
+          html += '<div class="report-card"><h3>Project Completion Rate</h3>';
+          appData.projects.forEach(function (p) {
+            var pt = appData.tasks.filter(function (t) {
+              return t.projectId === p.id;
+            });
+            var done = pt.filter(function (t) {
+              return t.status === "Completed";
+            }).length;
+            var pct = pt.length > 0 ? Math.round((done / pt.length) * 100) : 0;
+            html +=
+              '<div class="bar-container"><div class="bar-label">' +
+              p.name +
+              " — " +
+              done +
+              "/" +
+              pt.length +
+              " completed</div>";
+            html +=
+              '<div class="bar-bg"><div class="bar-fill" style="width:' +
+              pct +
+              '%;background:#27ae60;">' +
+              pct +
+              "%</div></div></div>";
+          });
+          html += "</div>";
+
+          var today = new Date().toISOString().split("T")[0];
+          var overdue = appData.tasks.filter(function (t) {
+            return t.status !== "Completed" && t.dueDate < today;
+          });
+          html +=
+            '<div class="report-card"><h3>Overdue Tasks (' +
+            overdue.length +
+            ")</h3>";
+          if (overdue.length === 0) {
+            html += '<p style="color:#27ae60;">No overdue tasks!</p>';
+          } else {
+            html +=
+              "<table><thead><tr><th>Title</th><th>Project</th><th>Assignee</th><th>Due Date</th><th>Status</th></tr></thead><tbody>";
+            overdue.forEach(function (t) {
+              html +=
+                "<tr><td>" +
+                t.title +
+                "</td><td>" +
+                getProjectName(t.projectId) +
+                "</td><td>" +
+                t.assignee +
+                "</td><td>" +
+                t.dueDate +
+                "</td><td>" +
+                statusBadge(t.status) +
+                "</td></tr>";
+            });
+            html += "</tbody></table>";
+          }
+          html += "</div>";
+
+          $("#reports-content").html(html);
+        }
+
+        loadData(function () {
+          renderDashboard();
+        });
+      });
+    </script>
+  </body>
+</html>

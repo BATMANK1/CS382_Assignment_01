@@ -1,0 +1,133 @@
+{
+  "projects": [
+    {
+      "id": 1,
+      "name": "Website Redesign",
+      "description": "Redesign the company website with modern UI",
+      "status": "In Progress",
+      "priority": "High",
+      "startDate": "2026-01-15",
+      "endDate": "2026-04-30"
+    },
+    {
+      "id": 2,
+      "name": "Mobile App Development",
+      "description": "Build a cross-platform mobile application",
+      "status": "Not Started",
+      "priority": "Medium",
+      "startDate": "2026-03-01",
+      "endDate": "2026-08-15"
+    },
+    {
+      "id": 3,
+      "name": "Database Migration",
+      "description": "Migrate legacy database to new cloud system",
+      "status": "Completed",
+      "priority": "High",
+      "startDate": "2025-11-01",
+      "endDate": "2026-02-28"
+    }
+  ],
+  "tasks": [
+    {
+      "id": 1,
+      "projectId": 1,
+      "title": "Design Homepage Mockup",
+      "description": "Create wireframes and mockups for the new homepage",
+      "assignee": "Ahmed",
+      "status": "Completed",
+      "priority": "High",
+      "dueDate": "2026-02-10"
+    },
+    {
+      "id": 2,
+      "projectId": 1,
+      "title": "Implement Navigation Bar",
+      "description": "Build responsive navigation component",
+      "assignee": "Sara",
+      "status": "In Progress",
+      "priority": "High",
+      "dueDate": "2026-03-01"
+    },
+    {
+      "id": 3,
+      "projectId": 1,
+      "title": "Setup Contact Form",
+      "description": "Create and validate the contact form page",
+      "assignee": "Ahmed",
+      "status": "Not Started",
+      "priority": "Medium",
+      "dueDate": "2026-03-15"
+    },
+    {
+      "id": 4,
+      "projectId": 2,
+      "title": "Setup React Native Project",
+      "description": "Initialize the project and configure dependencies",
+      "assignee": "Omar",
+      "status": "Not Started",
+      "priority": "High",
+      "dueDate": "2026-03-10"
+    },
+    {
+      "id": 5,
+      "projectId": 2,
+      "title": "Design App UI Screens",
+      "description": "Design all screens for the mobile application",
+      "assignee": "Sara",
+      "status": "Not Started",
+      "priority": "Medium",
+      "dueDate": "2026-03-20"
+    },
+    {
+      "id": 6,
+      "projectId": 3,
+      "title": "Backup Existing Database",
+      "description": "Create full backup of the current database",
+      "assignee": "Omar",
+      "status": "Completed",
+      "priority": "High",
+      "dueDate": "2025-11-15"
+    },
+    {
+      "id": 7,
+      "projectId": 3,
+      "title": "Setup Cloud Database",
+      "description": "Provision and configure the new cloud database instance",
+      "assignee": "Ahmed",
+      "status": "Completed",
+      "priority": "High",
+      "dueDate": "2025-12-01"
+    },
+    {
+      "id": 8,
+      "projectId": 3,
+      "title": "Migrate Data",
+      "description": "Transfer all records from legacy to cloud database",
+      "assignee": "Omar",
+      "status": "Completed",
+      "priority": "High",
+      "dueDate": "2026-01-15"
+    },
+    {
+      "id": 9,
+      "projectId": 1,
+      "title": "Write Unit Tests",
+      "description": "Create unit tests for all frontend components",
+      "assignee": "Sara",
+      "status": "Not Started",
+      "priority": "Low",
+      "dueDate": "2026-04-01"
+    },
+    {
+      "id": 10,
+      "projectId": 2,
+      "title": "API Integration",
+      "description": "Connect mobile app to backend REST API",
+      "assignee": "Ahmed",
+      "status": "Not Started",
+      "priority": "High",
+      "dueDate": "2026-05-01"
+    }
+  ]
+}
